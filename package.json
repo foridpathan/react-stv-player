@@ -29,7 +29,8 @@
     "@noriginmedia/norigin-spatial-navigation": "^2.2.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "video.js": "^8.21.0"
+    "video.js": "^8.21.0",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

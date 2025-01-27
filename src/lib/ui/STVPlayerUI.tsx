@@ -1,62 +1,65 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FocusContext, KeyPressDetails, useFocusable } from "@noriginmedia/norigin-spatial-navigation";
-import { CSSProperties, ReactNode, useEffect, useState } from "react";
-import { useSTVPlayer } from "../PlayerContext";
-import { STVPlayerButtonProps } from "../PlayerType";
+import { FocusContext, useFocusable } from "@noriginmedia/norigin-spatial-navigation";
+import { memo, ReactNode } from "react";
+import { Button as ControlButton } from "../components/button";
+import { ProgressBar } from "../components/Progress";
+import { SettingsController } from "../components/SettingsController";
+import { useSTVPlayerStore } from "../store/TVPlayerStore";
+import { useSTVPlayerActivity } from "../STVPlayerActivity";
+import { STVPlayerButtonProps, STVPlayerProps } from "../STVPlayerType";
 import { Icons } from "./icons";
 import { cn } from "./utils";
 
-type ControlButtonProps = {
-    children?: React.ReactNode;
-    handlePress?: (props: object, details: KeyPressDetails) => void | undefined;
-    handleRelease?: () => void | undefined;
-    handleArrowPress?: (dir: string) => boolean;
-    focusKey: string;
-    className?: string;
-    activeClass?: string;
-    style?: CSSProperties;
-    disabled?: boolean;
-};
+// const customButtons: STVPlayerButtonProps[] = [
+//     { action: "back", align: "left", position: "top" },
+//     { action: "settings", align: "right", position: "top" },
+//     { action: "loop", align: "left", position: "bottom" },
+//     { action: "like", align: "left", position: "bottom" },
+//     { action: "previous", align: "center", position: "bottom" },
+//     { action: "playpause", align: "center", position: "bottom" },
+//     { action: "next", align: "center", position: "bottom" },
+//     { action: "mute", align: "right", position: "bottom" },
+//     { action: "backward", align: "left", position: "center" },
+//     { action: "forward", align: "right", position: "center" },
+// ];
 
-const customButtons: STVPlayerButtonProps[] = [
-    { action: "back", align: "left", position: "top" },
-    { action: "settings", align: "right", position: "top" },
-    { action: "loop", align: "left", position: "bottom" },
-    { action: "like", align: "left", position: "bottom" },
-    { action: "previous", align: "center", position: "bottom" },
-    { action: "playpause", align: "center", position: "bottom" },
-    { action: "next", align: "center", position: "bottom" },
-    { action: "mute", align: "right", position: "bottom" },
-    { action: "backward", align: "left", position: "center" },
-    { action: "forward", align: "right", position: "center" },
-];
+export const STVPlayerUI = memo((props: STVPlayerProps) => {
+    const {
+        onLoopPress,
+        onLikePress,
+        onPreviousPress,
+        onSkipBackPress,
+        onSkipForwardPress,
+        onSkipReleasePress,
+        onNextPress,
+        onMutePress,
+        customButtons,
+        // disableFullscreen,
+        hideControlsOnArrowUp,
+    } = props;
 
-const formatTime = (value: number) => {
-    if (isNaN(value)) {
-        return;
-    }
-    let totalSeconds = value;
-    const hours = Math.floor(totalSeconds / 3600);
-    totalSeconds %= 3600;
-    let minutes = String(Math.floor(totalSeconds / 60));
-    let seconds = String(Math.floor(totalSeconds % 60));
-    seconds = seconds.padStart(2, "0");
-    if (hours > 0) {
-        minutes = minutes.padStart(2, "0");
-        return `${hours}:${minutes}:${seconds}`;
-    } else {
-        return `${minutes}:${seconds}`;
-    }
-};
+    useSTVPlayerActivity()
 
-
-export const STVPlayerUI = () => {
-    const { focusKey, ref } = useFocusable({
-        // trackChildren: true,
-        // saveLastFocusedChild: true,
+    const { focusKey, ref, } = useFocusable({
+        focusKey: "STVPlayer",
+        trackChildren: true,
+        saveLastFocusedChild: true,
     });
-    const { playerRef } = useSTVPlayer()
-    const [isPlaying, setIsPlaying] = useState(true);
+
+    const actions = useSTVPlayerStore((s) => s.actions);
+    const activity = useSTVPlayerStore((s) => s.activity);
+    const settingToggle = useSTVPlayerStore((s) => s.settingToggle);
+    const likeToggle = useSTVPlayerStore((s) => s.likeToggle);
+    const loop = useSTVPlayerStore((s) => s.loop);
+    const mediaIndex = useSTVPlayerStore((s) => s.mediaIndex) || 0;
+    const mediaCount = useSTVPlayerStore((s) => s.mediaCount);
+    const muted = useSTVPlayerStore((s) => s.muted);
+    const player = useSTVPlayerStore((s) => s.player);
+    const playing = useSTVPlayerStore((s) => s.playing);
+    const subTitle = useSTVPlayerStore((s) => s.subTitle);
+    const title = useSTVPlayerStore((s) => s.title);
+    const duration = useSTVPlayerStore((s) => s.duration);
+    const skipIncrement = duration / 30;
 
     const currentButtons: STVPlayerButtonProps[] = (customButtons !== null &&
         customButtons) || [
@@ -71,15 +74,14 @@ export const STVPlayerUI = () => {
         ];
 
     const togglePlay = () => {
-        const player = playerRef.current;
         if (player) {
             if (player?.paused()) {
                 player?.play();
-                setIsPlaying(false)
+                actions.setPlaying(true);
             }
             else {
                 player?.pause();
-                setIsPlaying(true)
+                actions.setPlaying(false);
             }
         }
     }
@@ -89,65 +91,54 @@ export const STVPlayerUI = () => {
         console.log('handleBack')
     };
     const handleSettings = () => {
-        console.log('handleSettings')
+        actions.setSettingToggle(!settingToggle)
     };
     const toggleLoop = () => {
         console.log('toggleLoop')
-        // actions.setLoop(!loop);
-        // onLoopPress?.();
+        actions.setLoop(!loop);
+        onLoopPress?.()
     };
 
     const toggleMuted = () => {
-        console.log('toggleMuted')
-        // actions.setMuted(!muted);
-        // onMutePress?.();
-    };
-
-    const toggleFullscreen = () => {
-        console.log('toggleFullscreen')
-        // actions.setFullscreen(!fullscreen);
-        // onFullscreenPress?.();
+        actions.setMuted(!muted);
+        onMutePress?.();
     };
 
     const handlePrevious = () => {
-        console.log('handlePrevious')
-        // mediaIndex && mediaIndex > 0 && actions.setMediaIndex(mediaIndex - 1);
-        // onPreviousPress?.();
+        if (mediaIndex && mediaIndex > 0) actions.setMediaIndex(mediaIndex - 1);
+        onPreviousPress?.();
     };
 
     const handleSkipBack = () => {
-        const player = playerRef.current;
         if (player) {
             const currentTime = player?.currentTime() || 0;
-            player?.currentTime(currentTime - 5);
+            player?.currentTime(currentTime - skipIncrement);
         }
+        onSkipBackPress?.();
     };
 
     const handleSkipForward = () => {
-        const player = playerRef.current;
         if (player) {
             const currentTime = player?.currentTime() || 0;
-            player?.currentTime(currentTime + 5);
+            player?.currentTime(currentTime + skipIncrement);
         }
+        onSkipForwardPress?.();
     };
 
     const handleNext = () => {
         console.log('handleNext')
-        // mediaCount &&
-        //     mediaIndex < mediaCount - 1 &&
-        //     actions.setMediaIndex(mediaIndex + 1);
-        // onNextPress?.();
+        if (mediaCount && mediaIndex < mediaCount - 1) actions.setMediaIndex(mediaIndex + 1);
+        onNextPress?.();
     };
 
     const handleSkipRelease = () => {
         console.log('handleSkipRelease')
         // !playing && togglePlay();
-        // onSkipReleasePress?.();
+        onSkipReleasePress?.();
     };
-    const onLikePress = () => {
-        console.log('handleSkipRelease')
-        // !playing && togglePlay();
-        // onSkipReleasePress?.();
+    const onLikePressHandler = () => {
+        actions.setLikeToggle(!likeToggle);
+        onLikePress?.();
     };
 
     const buttonMap: Record<string, STVPlayerButtonProps> = {
@@ -167,23 +158,23 @@ export const STVPlayerUI = () => {
         },
         loop: {
             action: "loop",
-            label: "Loop",
+            label: loop ? "Looping" : "Loop",
             onPress: toggleLoop,
             icon: Icons.Loop,
             isSelectedFill: false,
         },
         like: {
             action: "like",
-            label: "Like",
-            onPress: onLikePress,
-            icon: Icons.HeartOutline,
+            label: likeToggle ? "Liked" : "Like",
+            onPress: onLikePressHandler,
+            icon: likeToggle ? Icons.HeartFull : Icons.HeartOutline,
         },
         previous: {
             action: "previous",
             label: "Previous",
             onPress: handlePrevious,
             icon: Icons.Previews,
-            // disabled: mediaIndex === 0,
+            disabled: mediaIndex === 0,
         },
         backward: {
             action: "backward",
@@ -196,7 +187,7 @@ export const STVPlayerUI = () => {
             action: "playpause",
             label: "Play",
             onPress: togglePlay,
-            icon: !isPlaying ? Icons.Pause : Icons.Play,
+            icon: playing ? Icons.Pause : Icons.Play,
         },
         forward: {
             action: "forward",
@@ -210,13 +201,13 @@ export const STVPlayerUI = () => {
             label: "Next",
             onPress: handleNext,
             icon: Icons.Next,
-            // disabled: mediaCount ? mediaIndex === mediaCount - 1 : false,
+            disabled: mediaCount ? mediaIndex === mediaCount - 1 : false,
         },
         mute: {
             action: "mute",
-            label: "Mute",
+            label: muted ? "Muted" : "Mute",
             onPress: toggleMuted,
-            icon: Icons.Volume,
+            icon: !muted ? Icons.Volume : Icons.Mute,
         },
         custom: {
             action: "custom",
@@ -230,11 +221,11 @@ export const STVPlayerUI = () => {
             <>
                 {currentButtons.map((button, index) => {
                     if ((button.align === align) && (button.position === position)) {
-                        const Icon = button.icon || buttonMap[button.action]?.icon
+                        const Icon: any = button.icon || buttonMap[button.action]?.icon
                         return (
                             <ControlButton
-                                className={cn("relative w-16 h-16 flex items-center justify-center flex-col rounded-full border-transparent fill-white text-white stroke-white", button?.className)}
-                                activeClass={cn("border border-white", button?.selectedClass)}
+                                className={cn("relative w-16 h-16 flex group items-center justify-center flex-col rounded-full border-transparent fill-white text-white stroke-white", button?.className)}
+                                activeClass={cn("border border-white active", button?.selectedClass)}
                                 focusKey={button.action}
                                 handlePress={
                                     button.onPress ||
@@ -248,16 +239,15 @@ export const STVPlayerUI = () => {
                                 }
                                 key={index}
                                 disabled={button.disabled || buttonMap[button.action]?.disabled}
-                            // handleArrowPress={(dir) => {
-                            //     if (hideControlsOnArrowUp && dir === "up") {
-                            //         actions.setActivity(false);
-                            //     }
-                            //     return true;
-                            // }}
+                                handleArrowPress={(dir) => {
+                                    if (hideControlsOnArrowUp && dir === "up") {
+                                        actions.setActivity(false);
+                                    }
+                                    return true;
+                                }}
                             >
                                 {Icon && <div className="w-10 h-10"><Icon /></div>}
-
-                                <small className="absolute -bottom-6">{button.label || buttonMap[button.action]?.label}</small>
+                                {button.label || buttonMap[button.action]?.label && <small className="truncate text-lg absolute -bottom-8 opacity-0 group-hover:opacity-100 group-[.active]:opacity-100">{button.label || buttonMap[button.action]?.label}</small>}
                             </ControlButton>
                         );
                     }
@@ -267,40 +257,48 @@ export const STVPlayerUI = () => {
     };
 
     return (
-        <div className="absolute top-0 left-0 w-full h-full p-8">
-            <FocusContext.Provider value={focusKey}>
-                <div ref={ref} className="w-full h-full flex flex-col justify-between gap-4">
-                    <SectionRender className="flex justify-between gap-4">
-                        <div className="flex gap-3">{renderButtons('top', 'left')}</div>
-                        <div className="flex gap-3">{renderButtons('top', 'right')}</div>
-                    </SectionRender>
-                    <SectionRender className="flex flex-col justify-between gap-4 flex-1">
-                        <div className=""></div>
-                        <div className="flex items-center justify-between">
-                            <div className="flex gap-3 ">{renderButtons('center', 'left')}</div>
-                            <div className="flex gap-3">{renderButtons('center', 'center')}</div>
-                            <div className="flex gap-3">{renderButtons('center', 'right')}</div>
+        <div className={`absolute left-0 w-full h-full p-8 transition-all bottom-0 ${activity ? "bg-black bg-opacity-60" : ""}`}>
+            <div className={`w-full h-full flex flex-col justify-between gap-4 ${activity ? "opacity-100" : "opacity-0"}`}>
+                <FocusContext.Provider value={focusKey}>
+                    <div ref={ref} className={`flex-1 flex flex-col justify-between gap-4`}>
+                        <div className="flex justify-between gap-4">
+                            <div className="flex gap-3">{renderButtons('top', 'left')}</div>
+                            <div className="flex gap-3">{renderButtons('top', 'right')}</div>
                         </div>
-                        <div className="text-3xl text-white">Content Title</div>
-                    </SectionRender>
-                    <div className="flex flex-col">
-                        <SectionRender className="flex items-center justify-between gap-4">
-                            <div className="flex gap-3 ">{renderButtons('bottom', 'left')}</div>
-                            <div className="flex gap-3">{renderButtons('bottom', 'center')}</div>
-                            <div className="flex gap-3">{renderButtons('bottom', 'right')}</div>
-                        </SectionRender>
-                        <SectionRender>
-                            <ProgressBar
-                                handleSkipForward={handleSkipForward}
-                                handleSkipBack={handleSkipBack}
-                            />
-                        </SectionRender>
+                        <div className="flex flex-col justify-between gap-4 flex-1">
+                            <div className=""></div>
+                            <div className="flex items-center justify-between">
+                                <div className="flex gap-3 ">{renderButtons('center', 'left')}</div>
+                                <div className="flex gap-3">{renderButtons('center', 'center')}</div>
+                                <div className="flex gap-3">{renderButtons('center', 'right')}</div>
+                            </div>
+                            <div className="">
+                                {title && <div className="text-[2.2vw] text-white">{title}</div>}
+                                {subTitle && <div className="text-2xl text-white">{subTitle}</div>}
+                            </div>
+                        </div>
+                        <div className="flex flex-col">
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex gap-3 ">{renderButtons('bottom', 'left')}</div>
+                                <div className="flex gap-3">{renderButtons('bottom', 'center')}</div>
+                                <div className="flex gap-3">{renderButtons('bottom', 'right')}</div>
+                            </div>
+                        </div>
                     </div>
+                </FocusContext.Provider>
+                <div className="flex flex-col">
+                    <SectionRender>
+                        <ProgressBar
+                            handleSkipForward={handleSkipForward}
+                            handleSkipBack={handleSkipBack}
+                        />
+                    </SectionRender>
                 </div>
-            </FocusContext.Provider>
+            </div>
+            {settingToggle && <SettingsController />}
         </div>
     );
-};
+});
 
 const SectionRender = ({ children, className }: { children: ReactNode, className?: string }) => {
     const { ref, focusKey } = useFocusable()
@@ -313,118 +311,4 @@ const SectionRender = ({ children, className }: { children: ReactNode, className
         </FocusContext.Provider>
     )
 
-}
-
-
-function ProgressBar(props: any) {
-    const { playerRef } = useSTVPlayer()
-    const player = playerRef.current
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-
-    const handleTimeUpdate = () => {
-        const player = playerRef.current
-        if (player) {
-            setDuration(player?.duration() || 0)
-            setCurrentTime(player?.currentTime() || 0)
-        }
-    }
-
-    player?.on("timeupdate", handleTimeUpdate);
-
-    const { handleSkipForward, handleSkipBack } = props;
-    const progressPercentage = (currentTime / duration) * 100;
-
-    const handleSeekToPosition = (event: React.MouseEvent<HTMLDivElement>) => {
-        const innerDiv = event.currentTarget;
-        const clickX = event.nativeEvent.offsetX;
-        const calculatedPercentage = clickX / innerDiv.offsetWidth;
-        if (player) player.currentTime(calculatedPercentage * duration);
-    };
-
-    const disabled =
-        !player || !duration || currentTime >= 86400 || duration >= 86400;
-
-    return (
-        <div
-            className={cn("flex items-center pt-10 text-white",
-                {
-                    // hide: disabled,
-                })
-            }
-        >
-            <span data-testid="text-xl pr-2" className="time">
-                {player && formatTime(currentTime)}
-            </span>
-            <span
-                className="flex-1 h-2 bg-gray-300 bg-opacity-35 mx-3"
-                onMouseDown={(e) => e.preventDefault()}
-                onMouseUp={handleSeekToPosition}
-            >
-                <div className="relative h-2">
-                    {!disabled && (
-                        <ControlButton
-                            style={{ left: `${progressPercentage}%` }}
-                            className="w-6 h-6 bg-white rounded-full absolute -top-2"
-                            focusKey="progress-bar-button"
-                            key="progress-bar-button"
-                            handleArrowPress={(dir) => {
-                                if (dir === "up" || dir === "down") return true;
-                                (dir === "left") ? handleSkipBack() : handleSkipForward();
-                                return false;
-                            }}
-                        />
-                    )}
-                    <span
-                        className="absolute h-full block left-0 bg-white"
-                        style={{ width: `${progressPercentage}%` }}
-                    ></span>
-                </div>
-            </span>
-
-            <span data-testid="duration" className="time time--duration">
-                {player && formatTime(duration)}
-            </span>
-        </div>
-    );
-}
-
-
-function ControlButton(props: ControlButtonProps) {
-    const {
-        children,
-        handlePress,
-        handleRelease,
-        handleArrowPress = () => true,
-        focusKey,
-        className,
-        style,
-        disabled,
-        activeClass
-    } = props;
-    const { ref, focused, focusSelf } = useFocusable({
-        onEnterPress: !disabled ? handlePress : undefined,
-        onEnterRelease: !disabled ? handleRelease : undefined,
-        onArrowPress: handleArrowPress,
-        focusKey,
-        extraProps: {
-            focusKey
-        }
-    });
-    useEffect(() => {
-        if (focusKey === "playpause") focusSelf();
-    }, [focusSelf, focusKey]);
-
-    return (
-        <button
-            style={style}
-            className={cn(className, focused && activeClass, { focused, disabled })}
-            onMouseUp={handleRelease}
-            onMouseEnter={focusSelf}
-            ref={ref}
-            disabled={disabled}
-        >
-            {children}
-        </button>
-    );
 }

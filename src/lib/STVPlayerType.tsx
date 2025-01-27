@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { CSSProperties, MutableRefObject, ReactNode } from "react";
+import { CSSProperties, MutableRefObject, ReactElement, ReactNode } from "react";
 import videojs from 'video.js';
 
 // Define the type for Video.js player options
@@ -55,7 +55,7 @@ export type STVPlayerButtonProps = {
     position?: STVPlayerButtonPosition;
     align?: TVPlayerButtonAlign;
     label?: string;
-    icon?: ReactNode | Element | JSX.Element | string;
+    icon?: ReactNode | (() => ReactElement);
     onPress?: () => void;
     onRelease?: () => void;
     isSelectedFill?: boolean;
@@ -64,3 +64,25 @@ export type STVPlayerButtonProps = {
     selectedClass?: string;
     disabled?: boolean;
 };
+
+
+export interface STVPlayerProps extends VideoJsPlayerOptions {
+    activity?: boolean;
+    customButtons?: STVPlayerButtonProps[];
+    customToggle?: boolean;
+    likeToggle?: boolean;
+    settingToggle?: boolean;
+    mediaIndex?: number;
+    mediaCount?: number;
+    currentTrack?: "Quality" | "Language" | "Captions" | "Speed" | null;
+    player?: ReturnType<typeof videojs> | null;
+    subTitle?: string | null;
+    title?: string | null;
+    withTopCover?: boolean;
+    hideControlsOnArrowUp?: boolean;
+    disableFullscreen?: boolean;
+    disableInitNav?: boolean;
+    audioTrack?: videojs.AudioTrack | any;
+    videoTrack?: videojs.VideoTrack | any;
+    textTrack?: videojs.TextTrack | any;
+}

@@ -2,11 +2,11 @@
 import { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
-import { ReactStvPlayerContextType, VideoPlayerPropsInterface } from "./PlayerType";
+import { ReactStvPlayerContextType, VideoPlayerPropsInterface } from "./STVPlayerType";
 
 const CreatePlayerContext = createContext<ReactStvPlayerContextType | null>(null)
 
-export const ReactStvPlayerContext = ({ videoJsOptions, children }: VideoPlayerPropsInterface) => {
+export const STVPlayerContext = ({ videoJsOptions, children }: VideoPlayerPropsInterface) => {
     const videoRef = useRef<HTMLDivElement | null>(null);
     const playerRef = useRef<ReturnType<typeof videojs> | null>(null);
     const { options, onReady } = videoJsOptions;
