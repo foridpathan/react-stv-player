@@ -17,8 +17,8 @@ export interface VideoPlayerProps extends VideoJsPlayerOptions {
     onPause?: () => void;
     onEnded?: () => void;
     onError?: (error: any) => void;
-    onDuration?: (duration: number | undefined) => void;
-    onProgress?: (progress: number | undefined) => void;
+    onDuration?: (duration: number) => void;
+    onProgress?: (progress: number) => void;
     onAudioTracks?: (audioTracks: videojs.AudioTrack) => void;
     onQualityTracks?: (qualityTracks: videojs.VideoTrack) => void;
     onSubtitleTracks?: (textTracks: videojs.TextTrack) => void;
@@ -71,6 +71,7 @@ export const VideoPlayer = forwardRef<VideoJsPlayer, VideoPlayerProps>(
                     }
                 ) as unknown as VideoJsPlayer);
 
+
                 if (ref) {
                     if (typeof ref === "function") {
                         ref(player);
@@ -83,7 +84,11 @@ export const VideoPlayer = forwardRef<VideoJsPlayer, VideoPlayerProps>(
 
                 // Update player options dynamically
                 player.autoplay(options.autoplay ?? false);
-                player.src(options.sources ?? []);
+                if (options.src) {
+                    player.src([{ src: options.src, type: "video/mp4" }]);
+                } else if (options.sources) {
+                    player.src(options.sources);
+                }
             }
 
             return () => {
@@ -94,7 +99,7 @@ export const VideoPlayer = forwardRef<VideoJsPlayer, VideoPlayerProps>(
                 }
             };
             // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [ref, className]);
+        }, [ref, className, options.src, options.sources]);
 
         useEffect(() => {
             if (playerRef.current) {

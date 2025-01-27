@@ -1,37 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { CSSProperties, MutableRefObject, ReactElement, ReactNode } from "react";
+import { CSSProperties, ReactElement, ReactNode } from "react";
 import videojs from 'video.js';
+import { VideoJsPlayer, VideoJsPlayerOptions } from "./videojs";
 
-// Define the type for Video.js player options
-export interface VideoJsPlayerOptions {
-    autoplay?: boolean;
-    controls?: boolean;
-    sources?: {
-        src: string;
-        type: string;
-    }[];
-    [key: string]: any; // Allow additional options for flexibility
-}
-
-// Define the type for the onReady callback
-export interface VideoJsProps {
-    options: VideoJsPlayerOptions;
-    onReady?: (player: ReturnType<typeof videojs>) => void;
-}
-
-// Define the props interface for the Player component
-export interface VideoPlayerPropsInterface {
-    videoJsOptions: VideoJsProps;
-    children?: React.ReactNode;
-}
-
-export interface ReactStvPlayerContextType {
-    playerRef: MutableRefObject<ReturnType<typeof videojs> | null>
-    videoRef: MutableRefObject<HTMLDivElement | null>
-    options: VideoJsPlayerOptions
-}
-
+export type MediaType = {
+    url: string | string[] | MediaStream;
+    title?: string;
+    subTitle?: string;
+    preview?: string | boolean;
+};
 
 export type STVPlayerButtonAction =
     | "custom"
@@ -65,11 +43,38 @@ export type STVPlayerButtonProps = {
     disabled?: boolean;
 };
 
-
-export interface STVPlayerProps extends VideoJsPlayerOptions {
-    activity?: boolean;
+export interface STVuiProps {
+    title?: string | null
+    subTitle?: string | null
     customButtons?: STVPlayerButtonProps[];
+    hideControlsOnArrowUp?: boolean;
+    onLoopPress?: () => void;
+    onLikePress?: () => void;
+    onPreviousPress?: () => void;
+    onSkipBackPress?: () => void;
+    onSkipForwardPress?: () => void;
+    onSkipReleasePress?: () => void;
+    onNextPress?: () => void;
+    onMutePress?: () => void;
+    onReady?: (player: VideoJsPlayer | null) => void;
+    onPause?: () => void;
+    onPlay?: () => void;
+    onError?: (e: any, d: any, i: any, g: any) => void;
+    onEnded?: () => void;
+
+}
+
+export interface STVPlayerProps extends STVuiProps {
+    actions?: any
+    options?: VideoJsPlayerOptions;
+    mediaList?: MediaType[]
+    activity?: boolean;
     customToggle?: boolean;
+    loop?: boolean;
+    muted?: boolean;
+    playing?: boolean;
+    duration?: number;
+    fullscreen?: boolean;
     likeToggle?: boolean;
     settingToggle?: boolean;
     mediaIndex?: number;
@@ -79,10 +84,12 @@ export interface STVPlayerProps extends VideoJsPlayerOptions {
     subTitle?: string | null;
     title?: string | null;
     withTopCover?: boolean;
-    hideControlsOnArrowUp?: boolean;
     disableFullscreen?: boolean;
     disableInitNav?: boolean;
     audioTrack?: videojs.AudioTrack | any;
     videoTrack?: videojs.VideoTrack | any;
     textTrack?: videojs.TextTrack | any;
+    progress?: {
+        playedSeconds: number,
+    },
 }

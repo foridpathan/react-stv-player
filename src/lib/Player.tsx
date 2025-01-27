@@ -9,33 +9,36 @@ import { VideoJsPlayer } from './videojs';
 import VideoPlayer from './VideoPlayer';
 
 
-const STVPlayer = ({ videoJsOptions, ...props }: STVPlayerProps) => {
-    if (!props.disableInitNav)
+const STVPlayer = (props: STVPlayerProps) => {
+    const { onReady, onPause, onPlay, onError, onEnded, options, disableInitNav, mediaList } = props;
+
+    if (!disableInitNav)
         init({
             debug: false,
             visualDebug: false,
             throttle: 100,
         });
 
-    const { onReady, onPause, onPlay, onError, onEnded } =
-        props;
-
-    const playerRef = useRef<ReturnType<typeof videojs> | null>(null);
+    const playerRef = useRef<VideoJsPlayer | null>(null);
     const actions = useSTVPlayerStore((s) => s.actions);
     const loop = useSTVPlayerStore((s) => s.loop);
     const muted = useSTVPlayerStore((s) => s.muted);
-    const playing = useSTVPlayerStore((s) => s.playing);
+    const mediaIndex = useSTVPlayerStore((s) => s.mediaIndex) || 0;
     const fullscreen = useSTVPlayerStore((s) => s.fullscreen);
 
     useEffect(() => {
-        actions.setLight(props.light);
         actions.setProgress(0);
         actions.setDuration(0);
-    }, [props.url, props.light]);
+    }, []);
+
+    useEffect(() => {
+        if (mediaList && mediaList?.length > 0) {
+            actions.setMediaList(mediaList);
+        }
+    }, [mediaList]);
 
     useEffect(() => {
         actions.setPlaying(props.playing);
-        if (props.playing) actions.setLight(false);
     }, [props.playing]);
 
     useEffect(() => actions.setTitle(props.title), [props.title]);
@@ -58,7 +61,6 @@ const STVPlayer = ({ videoJsOptions, ...props }: STVPlayerProps) => {
 
     const handlePlay = () => {
         actions.setPlaying(true);
-        actions.setLight(false);
         onPlay?.();
     };
 
@@ -102,15 +104,18 @@ const STVPlayer = ({ videoJsOptions, ...props }: STVPlayerProps) => {
         actions.setTextTrack(textTracks)
     };
 
+    const sources: any = options?.sources || [];
+    const source = mediaList
+        ? [{ ...(sources.length > 0 ? sources[0] : {}), src: mediaList[mediaIndex]?.url }]
+        : sources;
     return (
         <>
             <VideoPlayer
                 ref={playerRef}
-                {...videoJsOptions.options}
                 className={fullscreen ? 'vjs-stv' : 'vjs-big-play-centered'}
+                {...options}
                 loop={loop}
                 muted={muted}
-                playing={playing}
                 onPlay={handlePlay}
                 onReady={handleReady}
                 onEnded={handleEnded}
@@ -121,8 +126,13 @@ const STVPlayer = ({ videoJsOptions, ...props }: STVPlayerProps) => {
                 onAudioTracks={handleAudioTracks}
                 onQualityTracks={handleQualityTracks}
                 onSubtitleTracks={handleSubtitleTracks}
+                sources={source}
             />
-            <STVPlayerUI />
+            {!options?.controls &&
+                <STVPlayerUI
+                    title={mediaList ? mediaList[mediaIndex]?.title : ""}
+                    subTitle={mediaList ? mediaList[mediaIndex]?.subTitle : ""}
+                />}
         </>
     );
 };

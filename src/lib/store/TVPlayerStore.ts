@@ -1,6 +1,6 @@
 import videojs from "video.js";
 import { create } from "zustand";
-import { STVPlayerProps } from "../STVPlayerType";
+import { MediaType, STVPlayerProps } from "../STVPlayerType";
 
 const INITIAL_STATE: STVPlayerProps = {
   activity: true,
@@ -19,12 +19,12 @@ export const useSTVPlayerStore = create<STVPlayerProps>()((set) => ({
     setCustomToggle: (customToggle: boolean) => set({ customToggle }),
     setDuration: (duration: number) => set({ duration }),
     setFullscreen: (fullscreen: boolean) => set({ fullscreen }),
-    setLight: (light: boolean) => set({ light }),
     setLikeToggle: (likeToggle: boolean) => set({ likeToggle }),
     setSettingToggle: (settingToggle: boolean) => set({ settingToggle }),
     setLoop: (loop: boolean) => set({ loop }),
     setMediaIndex: (mediaIndex: number) => set({ mediaIndex }),
     setMediaCount: (mediaCount: number) => set({ mediaCount }),
+    setMediaList: (mediaList: MediaType[]) => set({ mediaList }),
     setMuted: (muted: boolean) => set({ muted }),
     setPlayer: (player: ReturnType<typeof videojs>) => set({ player }),
     setAudioTrack: (audioTrack: videojs.AudioTrack) => set({ audioTrack }),

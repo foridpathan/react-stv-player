@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FocusContext, useFocusable } from "@noriginmedia/norigin-spatial-navigation";
-import { memo, ReactNode } from "react";
+import { memo, ReactNode, useEffect } from "react";
 import { Button as ControlButton } from "../components/button";
 import { ProgressBar } from "../components/Progress";
 import { SettingsController } from "../components/SettingsController";
 import { useSTVPlayerStore } from "../store/TVPlayerStore";
 import { useSTVPlayerActivity } from "../STVPlayerActivity";
-import { STVPlayerButtonProps, STVPlayerProps } from "../STVPlayerType";
+import { STVPlayerButtonProps, STVuiProps } from "../STVPlayerType";
 import { Icons } from "./icons";
 import { cn } from "./utils";
 
@@ -23,8 +23,10 @@ import { cn } from "./utils";
 //     { action: "forward", align: "right", position: "center" },
 // ];
 
-export const STVPlayerUI = memo((props: STVPlayerProps) => {
+export const STVPlayerUI = memo((props: STVuiProps) => {
     const {
+        title,
+        subTitle,
         onLoopPress,
         onLikePress,
         onPreviousPress,
@@ -34,7 +36,6 @@ export const STVPlayerUI = memo((props: STVPlayerProps) => {
         onNextPress,
         onMutePress,
         customButtons,
-        // disableFullscreen,
         hideControlsOnArrowUp,
     } = props;
 
@@ -56,10 +57,12 @@ export const STVPlayerUI = memo((props: STVPlayerProps) => {
     const muted = useSTVPlayerStore((s) => s.muted);
     const player = useSTVPlayerStore((s) => s.player);
     const playing = useSTVPlayerStore((s) => s.playing);
-    const subTitle = useSTVPlayerStore((s) => s.subTitle);
-    const title = useSTVPlayerStore((s) => s.title);
+
     const duration = useSTVPlayerStore((s) => s.duration);
-    const skipIncrement = duration / 30;
+    const skipIncrement = duration ? duration / 30 : 0;
+
+    useEffect(() => actions.setTitle(props.title), [props.title]);
+    useEffect(() => actions.setSubTitle(props.subTitle), [props.subTitle]);
 
     const currentButtons: STVPlayerButtonProps[] = (customButtons !== null &&
         customButtons) || [
@@ -126,7 +129,8 @@ export const STVPlayerUI = memo((props: STVPlayerProps) => {
     };
 
     const handleNext = () => {
-        console.log('handleNext')
+        const mediaCount = useSTVPlayerStore.getState().mediaCount;
+
         if (mediaCount && mediaIndex < mediaCount - 1) actions.setMediaIndex(mediaIndex + 1);
         onNextPress?.();
     };
@@ -224,7 +228,10 @@ export const STVPlayerUI = memo((props: STVPlayerProps) => {
                         const Icon: any = button.icon || buttonMap[button.action]?.icon
                         return (
                             <ControlButton
-                                className={cn("relative w-16 h-16 flex group items-center justify-center flex-col rounded-full border-transparent fill-white text-white stroke-white", button?.className)}
+                                className={cn("relative w-16 h-16 flex group items-center justify-center flex-col rounded-full border-transparent fill-white text-white stroke-white",
+                                    button?.className,
+                                    button.disabled || buttonMap[button.action]?.disabled ? "opacity-70" : ""
+                                )}
                                 activeClass={cn("border border-white active", button?.selectedClass)}
                                 focusKey={button.action}
                                 handlePress={
