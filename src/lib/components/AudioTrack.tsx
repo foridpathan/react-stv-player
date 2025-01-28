@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect } from "react";
 import { useSTVPlayerStore } from "../store/TVPlayerStore";
 import { Button } from "./button";
 
@@ -17,13 +16,6 @@ const AudioTrack = () => {
             }
         }
     };
-
-    useEffect(() => {
-        if (audioTrack?.length > 0) {
-            changeTrack(0);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [audioTrack]);
 
     const renderTrack = () => {
         const trackList = [];

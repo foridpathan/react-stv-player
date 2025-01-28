@@ -4,9 +4,9 @@ import { memo, ReactNode, useEffect } from "react";
 import { Button as ControlButton } from "../components/button";
 import { ProgressBar } from "../components/Progress";
 import { SettingsController } from "../components/SettingsController";
+import { useSTVPlayerActivity } from "../core/STVPlayerActivity";
 import { useSTVPlayerStore } from "../store/TVPlayerStore";
-import { useSTVPlayerActivity } from "../STVPlayerActivity";
-import { STVPlayerButtonProps, STVuiProps } from "../STVPlayerType";
+import { STVPlayerButtonProps, STVuiProps } from "../types/STVPlayerType";
 import { Icons } from "./icons";
 import { cn } from "./utils";
 
@@ -136,8 +136,6 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
     };
 
     const handleSkipRelease = () => {
-        console.log('handleSkipRelease')
-        // !playing && togglePlay();
         onSkipReleasePress?.();
     };
     const onLikePressHandler = () => {

@@ -2,14 +2,14 @@
 import { init } from '@noriginmedia/norigin-spatial-navigation';
 import { useEffect, useRef } from 'react';
 import videojs from 'video.js';
-import { useSTVPlayerStore } from './store/TVPlayerStore';
-import { STVPlayerProps } from './STVPlayerType';
-import { STVPlayerUI } from './ui';
-import { VideoJsPlayer } from './videojs';
+import Player from 'video.js/dist/types/player';
+import { useSTVPlayerStore } from '../store/TVPlayerStore';
+import { STVPlayerProps } from '../types/STVPlayerType';
+import { STVPlayerUI } from '../ui';
 import VideoPlayer from './VideoPlayer';
 
 
-const STVPlayer = (props: STVPlayerProps) => {
+export const ReactSTVPlayer = (props: STVPlayerProps) => {
     const { onReady, onPause, onPlay, onError, onEnded, options, disableInitNav, mediaList } = props;
 
     if (!disableInitNav)
@@ -19,7 +19,7 @@ const STVPlayer = (props: STVPlayerProps) => {
             throttle: 100,
         });
 
-    const playerRef = useRef<VideoJsPlayer | null>(null);
+    const playerRef = useRef<Player | null>(null);
     const actions = useSTVPlayerStore((s) => s.actions);
     const loop = useSTVPlayerStore((s) => s.loop);
     const muted = useSTVPlayerStore((s) => s.muted);
@@ -64,7 +64,7 @@ const STVPlayer = (props: STVPlayerProps) => {
         onPlay?.();
     };
 
-    const handleReady = (player: VideoJsPlayer) => {
+    const handleReady = (player: Player) => {
         actions.setPlayer(player);
         onReady?.(player);
     };
@@ -92,11 +92,11 @@ const STVPlayer = (props: STVPlayerProps) => {
         actions.setDuration(duration);
     };
 
-    const handleAudioTracks = (audioTracks: videojs.AudioTrack) => {
+    const handleAudioTracks = (audioTracks: any) => {
         actions.setAudioTrack(audioTracks);
     };
 
-    const handleQualityTracks = (qualityTracks: videojs.VideoTrack) => {
+    const handleQualityTracks = (qualityTracks: any) => {
         actions.setVideoTrack(qualityTracks)
     };
 
@@ -108,6 +108,7 @@ const STVPlayer = (props: STVPlayerProps) => {
     const source = mediaList
         ? [{ ...(sources.length > 0 ? sources[0] : {}), src: mediaList[mediaIndex]?.url }]
         : sources;
+        
     return (
         <>
             <VideoPlayer
@@ -136,5 +137,3 @@ const STVPlayer = (props: STVPlayerProps) => {
         </>
     );
 };
-
-export default STVPlayer;

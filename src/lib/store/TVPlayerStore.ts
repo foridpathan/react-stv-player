@@ -1,6 +1,9 @@
 import videojs from "video.js";
+import AudioTrack from "video.js/dist/types/tracks/audio-track";
+import TextTrack from "video.js/dist/types/tracks/text-track";
+import VideoTrack from "video.js/dist/types/tracks/video-track";
 import { create } from "zustand";
-import { MediaType, STVPlayerProps } from "../STVPlayerType";
+import { MediaType, STVPlayerProps } from "../types/STVPlayerType";
 
 const INITIAL_STATE: STVPlayerProps = {
   activity: true,
@@ -27,9 +30,9 @@ export const useSTVPlayerStore = create<STVPlayerProps>()((set) => ({
     setMediaList: (mediaList: MediaType[]) => set({ mediaList }),
     setMuted: (muted: boolean) => set({ muted }),
     setPlayer: (player: ReturnType<typeof videojs>) => set({ player }),
-    setAudioTrack: (audioTrack: videojs.AudioTrack) => set({ audioTrack }),
-    setVideoTrack: (videoTrack: videojs.VideoTrack) => set({ videoTrack }),
-    setTextTrack: (textTrack: videojs.TextTrack) => set({ textTrack }),
+    setAudioTrack: (audioTrack: AudioTrack) => set({ audioTrack }),
+    setVideoTrack: (videoTrack: VideoTrack) => set({ videoTrack }),
+    setTextTrack: (textTrack: TextTrack) => set({ textTrack }),
     setCurrentTrack: (
       currentTrack: "Quality" | "Language" | "Captions" | "Speed" | null
     ) => set({ currentTrack }),

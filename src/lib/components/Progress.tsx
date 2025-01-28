@@ -8,9 +8,9 @@ type ProgressBarType = {
 }
 
 export function ProgressBar(props: ProgressBarType) {
-    const duration = useSTVPlayerStore((s) => s.duration);
+    const duration = useSTVPlayerStore((s) => s.duration) || 0;
     const progress = useSTVPlayerStore((s) => s.progress);
-    const currentTime = progress.playedSeconds
+    const currentTime = progress?.playedSeconds || 0
     const player = useSTVPlayerStore((s) => s.player);
 
     const { handleSkipForward, handleSkipBack } = props;

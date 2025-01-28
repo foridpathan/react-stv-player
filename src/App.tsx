@@ -1,6 +1,4 @@
-import ReactStvPlayer from "./lib/Player";
-import { MediaType } from "./lib/STVPlayerType";
-import { VideoJsPlayerOptions } from "./lib/videojs";
+import ReactSTVPlayer, { MediaType, VideoJsPlayerOptions } from "./lib";
 
 function App() {
 
@@ -31,7 +29,7 @@ function App() {
 
   }
 
-  return <ReactStvPlayer options={options} mediaList={mediaList} mediaCount={mediaList.length} mediaIndex={0} />;
+  return <ReactSTVPlayer options={options} mediaList={mediaList} mediaCount={mediaList.length} mediaIndex={0} />;
 }
 
 export default App

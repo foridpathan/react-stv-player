@@ -1,30 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { forwardRef, Ref, useEffect, useRef } from "react";
 import videojs from "video.js";
+import Player from "video.js/dist/types/player";
 import "video.js/dist/video-js.css";
-import { VideoJsPlayer, VideoJsPlayerOptions } from "./videojs";
+import "../index.css";
+import { VideoJsPlayerOptions } from "../types";
 
 interface ExtendedPlayer extends VideoJsPlayerOptions {
-    audioTracks?: () => videojs.AudioTrack;
+    audioTracks?: () => typeof videojs.AudioTrack;
     textTracks?: () => videojs.TextTrack;
-    qualityLevels?: () => videojs.VideoTrack;
+    qualityLevels?: () => any;
 }
 
 export interface VideoPlayerProps extends VideoJsPlayerOptions {
     className?: string;
-    onReady?: (player: VideoJsPlayer) => void;
+    onReady?: (player: Player) => void;
     onPlay?: () => void;
     onPause?: () => void;
     onEnded?: () => void;
     onError?: (error: any) => void;
     onDuration?: (duration: number) => void;
     onProgress?: (progress: number) => void;
-    onAudioTracks?: (audioTracks: videojs.AudioTrack) => void;
-    onQualityTracks?: (qualityTracks: videojs.VideoTrack) => void;
+    onAudioTracks?: (audioTracks: typeof videojs.AudioTrack) => void;
+    onQualityTracks?: (qualityTracks: any) => void;
     onSubtitleTracks?: (textTracks: videojs.TextTrack) => void;
 }
 
-export const VideoPlayer = forwardRef<VideoJsPlayer, VideoPlayerProps>(
+export const VideoPlayer = forwardRef<Player, VideoPlayerProps>(
     (
         {
             onReady,
@@ -40,10 +42,10 @@ export const VideoPlayer = forwardRef<VideoJsPlayer, VideoPlayerProps>(
             className,
             ...options
         },
-        ref: Ref<VideoJsPlayer>
+        ref: Ref<Player>
     ) => {
         const videoRef = useRef<HTMLDivElement | null>(null);
-        const playerRef = useRef<VideoJsPlayer | null>(null);
+        const playerRef = useRef<Player | null>(null);
 
         useEffect(() => {
             if (!playerRef.current && videoRef.current) {
@@ -61,7 +63,7 @@ export const VideoPlayer = forwardRef<VideoJsPlayer, VideoPlayerProps>(
                     videoElement,
                     options,
                     function () {
-                        onReady?.(this as unknown as VideoJsPlayer);
+                        onReady?.(this as unknown as Player);
 
                         const extendedPlayer = this as unknown as ExtendedPlayer;
 
@@ -69,14 +71,14 @@ export const VideoPlayer = forwardRef<VideoJsPlayer, VideoPlayerProps>(
                         if (extendedPlayer.textTracks) onSubtitleTracks?.(extendedPlayer.textTracks());
                         if (extendedPlayer.qualityLevels) onQualityTracks?.(extendedPlayer.qualityLevels());
                     }
-                ) as unknown as VideoJsPlayer);
+                ) as unknown as Player);
 
 
                 if (ref) {
                     if (typeof ref === "function") {
                         ref(player);
                     } else {
-                        (ref as React.MutableRefObject<VideoJsPlayer>).current = player;
+                        (ref as React.MutableRefObject<Player>).current = player;
                     }
                 }
             } else if (playerRef.current) {
@@ -90,7 +92,7 @@ export const VideoPlayer = forwardRef<VideoJsPlayer, VideoPlayerProps>(
                     player.src(options.sources);
                 }
             }
-
+            
             return () => {
                 // Dispose player on unmount
                 if (playerRef.current) {
@@ -106,6 +108,7 @@ export const VideoPlayer = forwardRef<VideoJsPlayer, VideoPlayerProps>(
                 playerRef.current.loop(options.loop ?? false);
             }
         }, [options.loop])
+        
         useEffect(() => {
             if (playerRef.current) {
                 playerRef.current.muted(options.muted ?? false);
@@ -114,13 +117,13 @@ export const VideoPlayer = forwardRef<VideoJsPlayer, VideoPlayerProps>(
 
         useEffect(() => {
             if (playerRef.current) {
-                const player = playerRef.current as unknown as VideoJsPlayer;
+                const player = playerRef.current as unknown as Player;
                 if (onPlay) player.on("play", onPlay);
                 if (onPause) player.on("pause", onPause);
                 if (onEnded) player.on("ended", onEnded);
                 player.on("error", () => onError?.(player.error()));
-                player.on("durationchange", () => onDuration?.(player.duration()));
-                player.on("timeupdate", () => onProgress?.(player.currentTime()));
+                player.on("durationchange", () => onDuration?.(player?.duration()||0));
+                player.on("timeupdate", () => onProgress?.(player.currentTime()||0));
 
             }
         }, [onPlay, onPause, onEnded, onError, onDuration, onProgress, playerRef]);

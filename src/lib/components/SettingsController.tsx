@@ -33,7 +33,7 @@ export const SettingsController = () => {
                     {!currentTrack &&
                         <div className="flex flex-col gap-4">
                             {
-                                videoTrack.length > 0 &&
+                                videoTrack?.length > 0 &&
                                 <Button
                                     className="border border-white w-full p-4 bg-gray-200 rounded-lg"
                                     focusKey="qualityTrack"
@@ -46,7 +46,7 @@ export const SettingsController = () => {
                                 </Button>
                             }
                             {
-                                audioTrack.length > 0 &&
+                                audioTrack?.length > 0 &&
                                 <Button
                                     className="border border-white w-full p-4 bg-gray-200 rounded-lg"
                                     focusKey="audioTrack"
@@ -59,7 +59,7 @@ export const SettingsController = () => {
                                 </Button>
                             }
                             {
-                                textTrack.length > 0 &&
+                                textTrack?.length > 0 &&
                                 <Button
                                     className="border border-white w-full p-4 bg-gray-200 rounded-lg"
                                     focusKey="captionsTrack"

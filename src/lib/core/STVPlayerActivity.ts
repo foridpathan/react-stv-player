@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { setFocus } from "@noriginmedia/norigin-spatial-navigation";
 import { useCallback, useEffect, useRef } from "react";
-import { useSTVPlayerStore } from "./store/TVPlayerStore";
+import { useSTVPlayerStore } from "../store/TVPlayerStore";
 
 const ACTIVITY_TIMEOUT = 4000;
 
