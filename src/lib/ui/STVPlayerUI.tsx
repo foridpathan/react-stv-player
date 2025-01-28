@@ -213,37 +213,50 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
                 {currentButtons.map((button, index) => {
                     if ((button.align === align) && (button.position === position)) {
                         const Icon: any = button.icon || buttonMap[button.action]?.icon
-                        return (
-                            <ControlButton
-                                className={cn("relative w-16 h-16 flex group items-center justify-center flex-col",
-                                    button?.className || "rounded-full border-transparent fill-white text-white stroke-white",
-                                    button.disabled || buttonMap[button.action]?.disabled ? "opacity-60" : ""
-                                )}
-                                activeClass={cn(button?.selectedClass || "border border-white active")}
-                                focusKey={button.action}
-                                handlePress={
-                                    button.onPress ||
-                                    buttonMap[button.action]?.onPress ||
-                                    undefined
-                                }
-                                handleRelease={
-                                    button.onRelease ||
-                                    buttonMap[button.action]?.onRelease ||
-                                    undefined
-                                }
-                                key={index}
-                                disabled={button.disabled || buttonMap[button.action]?.disabled}
-                                handleArrowPress={(dir) => {
-                                    if (hideControlsOnArrowUp && dir === "up") {
-                                        actions.setActivity(false);
+                        if (button.action === 'title') return <div className="flex flex-col py-2">
+                            {title && <div className="text-[2.2vw] text-white">{title}</div>}
+                            {subTitle && <div className="text-2xl text-white">{subTitle}</div>}
+                        </div>
+                        else if (button.action === "progressBar") return <div className="flex flex-col flex-1 py-4">
+                            <SectionRender>
+                                <ProgressBar
+                                    handleSkipForward={handleSkipForward}
+                                    handleSkipBack={handleSkipBack}
+                                />
+                            </SectionRender>
+                        </div>
+                        else
+                            return (
+                                <ControlButton
+                                    className={cn("relative w-16 h-16 flex group items-center justify-center flex-col",
+                                        button?.className || "rounded-full border-transparent fill-white text-white stroke-white",
+                                        button.disabled || buttonMap[button.action]?.disabled ? "opacity-60" : ""
+                                    )}
+                                    activeClass={cn(button?.selectedClass || "border border-white active")}
+                                    focusKey={button.action}
+                                    handlePress={
+                                        button.onPress ||
+                                        buttonMap[button.action]?.onPress ||
+                                        undefined
                                     }
-                                    return true;
-                                }}
-                            >
-                                {Icon && <div className="w-10 h-10"><Icon /></div>}
-                                {button.label || buttonMap[button.action]?.label && <small className="truncate text-lg absolute -bottom-8 opacity-0 group-hover:opacity-100 group-[.active]:opacity-100">{button.label || buttonMap[button.action]?.label}</small>}
-                            </ControlButton>
-                        );
+                                    handleRelease={
+                                        button.onRelease ||
+                                        buttonMap[button.action]?.onRelease ||
+                                        undefined
+                                    }
+                                    key={index}
+                                    disabled={button.disabled || buttonMap[button.action]?.disabled}
+                                    handleArrowPress={(dir) => {
+                                        if (hideControlsOnArrowUp && dir === "up") {
+                                            actions.setActivity(false);
+                                        }
+                                        return true;
+                                    }}
+                                >
+                                    {Icon && <div className="w-10 h-10"><Icon /></div>}
+                                    {button.label || buttonMap[button.action]?.label && <small className="truncate text-lg absolute -bottom-8 opacity-0 group-hover:opacity-100 group-[.active]:opacity-100">{button.label || buttonMap[button.action]?.label}</small>}
+                                </ControlButton>
+                            );
                     }
                 })}
             </>
@@ -260,34 +273,25 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
                             <div className="flex gap-3">{renderButtons('top', 'right')}</div>
                         </div>
                         <div className="flex flex-col justify-between gap-4 flex-1">
-                            <div className=""></div>
+                            <div className="">{renderButtons('center', 'top')}</div>
                             <div className="flex items-center justify-between">
                                 <div className="flex gap-3 ">{renderButtons('center', 'left')}</div>
                                 <div className="flex gap-3">{renderButtons('center', 'center')}</div>
                                 <div className="flex gap-3">{renderButtons('center', 'right')}</div>
                             </div>
-                            <div className="">
-                                {title && <div className="text-[2.2vw] text-white">{title}</div>}
-                                {subTitle && <div className="text-2xl text-white">{subTitle}</div>}
-                            </div>
+                            <div className="">{renderButtons('center', 'bottom')}</div>
                         </div>
                         <div className="flex flex-col">
+                            <div className="">{renderButtons('bottom', 'top')}</div>
                             <div className="flex items-center justify-between gap-4">
                                 <div className="flex gap-3 ">{renderButtons('bottom', 'left')}</div>
                                 <div className="flex gap-3">{renderButtons('bottom', 'center')}</div>
                                 <div className="flex gap-3">{renderButtons('bottom', 'right')}</div>
                             </div>
+                            <div className="">{renderButtons('bottom', 'bottom')}</div>
                         </div>
                     </div>
                 </FocusContext.Provider>
-                <div className="flex flex-col">
-                    <SectionRender>
-                        <ProgressBar
-                            handleSkipForward={handleSkipForward}
-                            handleSkipBack={handleSkipBack}
-                        />
-                    </SectionRender>
-                </div>
                 {mediaCount && mediaCount > 0 && <div className="flex flex-col transition-all">
                     <MediaList />
                 </div>}

@@ -2,6 +2,7 @@ import ReactSTVPlayer, { MediaType, STVPlayerButtonProps, VideoJsPlayerOptions }
 
 const customButtons: STVPlayerButtonProps[] = [
   { action: "back", align: "left", position: "top" },
+  { action: "title", align: "top", position: "bottom" },
   { action: "settings", align: "right", position: "top" },
   { action: "loop", align: "left", position: "bottom" },
   { action: "like", align: "left", position: "bottom" },
@@ -9,6 +10,7 @@ const customButtons: STVPlayerButtonProps[] = [
   { action: "playpause", align: "center", position: "bottom" },
   { action: "next", align: "center", position: "bottom" },
   { action: "mute", align: "right", position: "bottom" },
+  { action: "progressBar", align: "bottom", position: "bottom" },
   { action: "backward", align: "left", position: "center" },
   { action: "forward", align: "right", position: "center" },
 ];

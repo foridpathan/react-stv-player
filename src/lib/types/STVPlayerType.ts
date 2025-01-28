@@ -85,6 +85,8 @@ export type MediaType = {
 };
 
 export type STVPlayerButtonAction =
+  | "title"
+  | "progressBar"
   | "custom"
   | "back"
   | "settings"
@@ -99,7 +101,12 @@ export type STVPlayerButtonAction =
   | "backward";
 
 export type STVPlayerButtonPosition = "top" | "center" | "bottom";
-export type TVPlayerButtonAlign = "left" | "center" | "right";
+export type TVPlayerButtonAlign =
+  | "left"
+  | "center"
+  | "right"
+  | "top"
+  | "bottom";
 
 export type STVPlayerButtonProps = {
   action: STVPlayerButtonAction;
