@@ -22,6 +22,7 @@ export const useSTVPlayerStore = create<STVPlayerProps>()((set) => ({
     setCustomToggle: (customToggle: boolean) => set({ customToggle }),
     setDuration: (duration: number) => set({ duration }),
     setFullscreen: (fullscreen: boolean) => set({ fullscreen }),
+    setMouseHover: (disableMouseHover: boolean) => set({ disableMouseHover }),
     setLikeToggle: (likeToggle: boolean) => set({ likeToggle }),
     setSettingToggle: (settingToggle: boolean) => set({ settingToggle }),
     setLoop: (loop: boolean) => set({ loop }),
@@ -42,7 +43,8 @@ export const useSTVPlayerStore = create<STVPlayerProps>()((set) => ({
         ...state,
         progress: { ...state.progress, playedSeconds: progress },
       })),
-    setSubTitle: (subTitle: string) => set({ subTitle }),
     setTitle: (title: string) => set({ title }),
+    setSubTitle: (subTitle: string) => set({ subTitle }),
+    setMediaTitle: (mediaTitle: string) => set({ mediaTitle }),
   },
 }));

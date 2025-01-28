@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FocusContext, useFocusable } from "@noriginmedia/norigin-spatial-navigation";
 import { memo, ReactNode, useEffect } from "react";
+import { MediaList } from "../components";
 import { Button as ControlButton } from "../components/button";
 import { ProgressBar } from "../components/Progress";
 import { SettingsController } from "../components/SettingsController";
@@ -9,19 +10,6 @@ import { useSTVPlayerStore } from "../store/TVPlayerStore";
 import { STVPlayerButtonProps, STVuiProps } from "../types/STVPlayerType";
 import { Icons } from "./icons";
 import { cn } from "./utils";
-
-// const customButtons: STVPlayerButtonProps[] = [
-//     { action: "back", align: "left", position: "top" },
-//     { action: "settings", align: "right", position: "top" },
-//     { action: "loop", align: "left", position: "bottom" },
-//     { action: "like", align: "left", position: "bottom" },
-//     { action: "previous", align: "center", position: "bottom" },
-//     { action: "playpause", align: "center", position: "bottom" },
-//     { action: "next", align: "center", position: "bottom" },
-//     { action: "mute", align: "right", position: "bottom" },
-//     { action: "backward", align: "left", position: "center" },
-//     { action: "forward", align: "right", position: "center" },
-// ];
 
 export const STVPlayerUI = memo((props: STVuiProps) => {
     const {
@@ -89,13 +77,14 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
         }
     }
 
-
     const handleBack = () => {
         console.log('handleBack')
     };
+
     const handleSettings = () => {
         actions.setSettingToggle(!settingToggle)
     };
+
     const toggleLoop = () => {
         console.log('toggleLoop')
         actions.setLoop(!loop);
@@ -226,11 +215,11 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
                         const Icon: any = button.icon || buttonMap[button.action]?.icon
                         return (
                             <ControlButton
-                                className={cn("relative w-16 h-16 flex group items-center justify-center flex-col rounded-full border-transparent fill-white text-white stroke-white",
-                                    button?.className,
-                                    button.disabled || buttonMap[button.action]?.disabled ? "opacity-70" : ""
+                                className={cn("relative w-16 h-16 flex group items-center justify-center flex-col",
+                                    button?.className || "rounded-full border-transparent fill-white text-white stroke-white",
+                                    button.disabled || buttonMap[button.action]?.disabled ? "opacity-60" : ""
                                 )}
-                                activeClass={cn("border border-white active", button?.selectedClass)}
+                                activeClass={cn(button?.selectedClass || "border border-white active")}
                                 focusKey={button.action}
                                 handlePress={
                                     button.onPress ||
@@ -262,7 +251,7 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
     };
 
     return (
-        <div className={`absolute left-0 w-full h-full p-8 transition-all bottom-0 ${activity ? "bg-black bg-opacity-60" : ""}`}>
+        <div className={`absolute left-0 w-full h-full p-8 transition-all overflow-hidden bottom-0 ${activity ? "bg-black bg-opacity-60" : ""}`}>
             <div className={`w-full h-full flex flex-col justify-between gap-4 ${activity ? "opacity-100" : "opacity-0"}`}>
                 <FocusContext.Provider value={focusKey}>
                     <div ref={ref} className={`flex-1 flex flex-col justify-between gap-4`}>
@@ -299,6 +288,9 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
                         />
                     </SectionRender>
                 </div>
+                {mediaCount && mediaCount > 0 && <div className="flex flex-col transition-all">
+                    <MediaList />
+                </div>}
             </div>
             {settingToggle && <SettingsController />}
         </div>

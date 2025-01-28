@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { init } from '@noriginmedia/norigin-spatial-navigation';
 import { useEffect, useRef } from 'react';
@@ -10,7 +11,24 @@ import VideoPlayer from './VideoPlayer';
 
 
 export const ReactSTVPlayer = (props: STVPlayerProps) => {
-    const { onReady, onPause, onPlay, onError, onEnded, options, disableInitNav, mediaList } = props;
+    const {
+        onReady,
+        onPause,
+        onPlay,
+        onError,
+        onEnded,
+        options,
+        disableInitNav,
+        mediaList,
+        customButtons,
+        onLoopPress,
+        onLikePress,
+        onPreviousPress,
+        onSkipBackPress,
+        onSkipForwardPress,
+        onSkipReleasePress,
+        onNextPress,
+        onMutePress, } = props;
 
     if (!disableInitNav)
         init({
@@ -37,22 +55,16 @@ export const ReactSTVPlayer = (props: STVPlayerProps) => {
         }
     }, [mediaList]);
 
-    useEffect(() => {
-        actions.setPlaying(props.playing);
-    }, [props.playing]);
-
+    useEffect(() => actions.setPlaying(props.playing), [props.playing]);
     useEffect(() => actions.setTitle(props.title), [props.title]);
     useEffect(() => actions.setSubTitle(props.subTitle), [props.subTitle]);
-    useEffect(() => {
-        actions.setFullscreen(!props.disableFullscreen);
-    }, [props.disableFullscreen]);
-
+    useEffect(() => actions.setMediaTitle(props.mediaTitle), [props.mediaTitle]);
+    useEffect(() => actions.setFullscreen(!props.disableFullscreen), [props.disableFullscreen]);
     useEffect(() => actions.setLoop(props.loop), [props.loop]);
     useEffect(() => actions.setMuted(props.muted), [props.muted]);
     useEffect(() => actions.setMediaCount(props.mediaCount), [props.mediaCount]);
-    useEffect(() => {
-        setTimeout(() => actions.setMediaIndex(props.mediaIndex));
-    }, [props.mediaIndex]);
+    useEffect(() => { setTimeout(() => actions.setMediaIndex(props.mediaIndex)) }, [props.mediaIndex]);
+    useEffect(() => { setTimeout(() => actions.setMouseHover(props.disableMouseHover)) }, [props.disableMouseHover]);
 
     const handlePause = () => {
         actions.setPlaying(false);
@@ -108,7 +120,7 @@ export const ReactSTVPlayer = (props: STVPlayerProps) => {
     const source = mediaList
         ? [{ ...(sources.length > 0 ? sources[0] : {}), src: mediaList[mediaIndex]?.url }]
         : sources;
-        
+
     return (
         <>
             <VideoPlayer
@@ -133,6 +145,15 @@ export const ReactSTVPlayer = (props: STVPlayerProps) => {
                 <STVPlayerUI
                     title={mediaList ? mediaList[mediaIndex]?.title : ""}
                     subTitle={mediaList ? mediaList[mediaIndex]?.subTitle : ""}
+                    customButtons={customButtons}
+                    onLoopPress={onLoopPress}
+                    onLikePress={onLikePress}
+                    onPreviousPress={onPreviousPress}
+                    onSkipBackPress={onSkipBackPress}
+                    onSkipForwardPress={onSkipForwardPress}
+                    onSkipReleasePress={onSkipReleasePress}
+                    onNextPress={onNextPress}
+                    onMutePress={onMutePress}
                 />}
         </>
     );

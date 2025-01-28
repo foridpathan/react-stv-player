@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { setFocus } from "@noriginmedia/norigin-spatial-navigation";
+import {
+  navigateByDirection,
+  setFocus,
+} from "@noriginmedia/norigin-spatial-navigation";
 import { useCallback, useEffect, useRef } from "react";
 import { useSTVPlayerStore } from "../store/TVPlayerStore";
 
@@ -67,6 +70,15 @@ export const useSTVPlayerActivity = () => {
     if (playing && activity) actions.setActivity(false);
   }, [playing, activity, actions]);
 
+  const whileControlling = (event: WheelEvent) => {
+    const direction = event.deltaY > 0 ? "down" : "up";
+    if (direction === "up") {
+      navigateByDirection("up", event);
+    } else if (direction === "down") {
+      navigateByDirection("down", event);
+    }
+  };
+
   useEffect(() => {
     startActivityTimer(activity);
   }, [activity, startActivityTimer]);
@@ -76,11 +88,13 @@ export const useSTVPlayerActivity = () => {
     document.addEventListener("mousemove", activate);
     document.addEventListener("keydown", activate);
     document.addEventListener("mouseleave", deActivate);
+    document.addEventListener("wheel", whileControlling);
     return () => {
       document.removeEventListener("click", activate);
       document.removeEventListener("mousemove", activate);
       document.removeEventListener("keydown", activate);
       document.removeEventListener("mouseleave", deActivate);
+      document.removeEventListener("wheel", whileControlling);
     };
   }, [activate, deActivate]);
 };
