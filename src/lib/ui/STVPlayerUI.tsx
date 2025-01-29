@@ -254,8 +254,8 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
                                         return true;
                                     }}
                                 >
-                                    {Icon && <div className="w-10 h-10"><Icon /></div>}
-                                    {button.label || buttonMap[button.action]?.label && <small className="truncate text-lg absolute -bottom-8 opacity-0 group-hover:opacity-100 group-[.active]:opacity-100">{button.label || buttonMap[button.action]?.label}</small>}
+                                    {Icon && <div className="w-10 h-10 flex items-center justify-center">{typeof Icon === 'function' ? <Icon /> : Icon}</div>}
+                                    {(button.label || buttonMap[button.action]?.label) && <small className="truncate text-lg absolute -bottom-8 opacity-0 group-hover:opacity-100 group-[.active]:opacity-100">{button.label || buttonMap[button.action]?.label}</small>}
                                 </ControlButton>
                             );
                     }
