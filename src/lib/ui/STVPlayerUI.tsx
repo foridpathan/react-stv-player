@@ -213,15 +213,16 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
                 {currentButtons.map((button, index) => {
                     if ((button.align === align) && (button.position === position)) {
                         const Icon: any = button.icon || buttonMap[button.action]?.icon
-                        if (button.action === 'title') return <div className="flex flex-col py-2">
+                        if (button.action === 'title') return <div key={index} className={cn("flex flex-col py-2", button?.className)}>
                             {title && <div className="text-[2.2vw] text-white">{title}</div>}
                             {subTitle && <div className="text-2xl text-white">{subTitle}</div>}
                         </div>
-                        else if (button.action === "progressBar") return <div className="flex flex-col flex-1 py-4">
+                        else if (button.action === "progressBar") return <div key={index} className="flex flex-col flex-1 py-4">
                             <SectionRender>
                                 <ProgressBar
                                     handleSkipForward={handleSkipForward}
                                     handleSkipBack={handleSkipBack}
+                                    button={button}
                                 />
                             </SectionRender>
                         </div>
@@ -279,7 +280,14 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
                                 <div className="flex gap-3">{renderButtons('center', 'center')}</div>
                                 <div className="flex gap-3">{renderButtons('center', 'right')}</div>
                             </div>
-                            <div className="">{renderButtons('center', 'bottom')}</div>
+                            <div className="">{
+                                renderButtons('center', 'bottom')}
+                                {currentButtons.filter(button => button.action === 'title').length <= 0 && <div className="flex flex-col">
+                                    {title && <div className="text-[2.2vw] text-white">{title}</div>}
+                                    {subTitle && <div className="text-2xl text-white">{subTitle}</div>}
+                                </div>
+                                }
+                            </div>
                         </div>
                         <div className="flex flex-col">
                             <div className="">{renderButtons('bottom', 'top')}</div>
@@ -292,6 +300,14 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
                         </div>
                     </div>
                 </FocusContext.Provider>
+                {currentButtons.filter(button => button.action === 'progressBar').length <= 0 && <div className="flex flex-col">
+                    <SectionRender>
+                        <ProgressBar
+                            handleSkipForward={handleSkipForward}
+                            handleSkipBack={handleSkipBack}
+                        />
+                    </SectionRender>
+                </div>}
                 {mediaCount && mediaCount > 0 && <div className="flex flex-col transition-all">
                     <MediaList />
                 </div>}

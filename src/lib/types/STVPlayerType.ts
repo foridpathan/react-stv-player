@@ -108,8 +108,7 @@ export type TVPlayerButtonAlign =
   | "top"
   | "bottom";
 
-export type STVPlayerButtonProps = {
-  action: STVPlayerButtonAction;
+interface BaseSTVPlayerButtonProps {
   position?: STVPlayerButtonPosition;
   align?: TVPlayerButtonAlign;
   label?: string;
@@ -117,11 +116,29 @@ export type STVPlayerButtonProps = {
   onPress?: () => void;
   onRelease?: () => void;
   isSelectedFill?: boolean;
-  className?: string;
-  style?: CSSProperties;
-  selectedClass?: string;
   disabled?: boolean;
-};
+  style?: CSSProperties;
+  className?: string;
+  selectedClass?: string;
+}
+
+interface ProgressBarProps extends BaseSTVPlayerButtonProps {
+  action: "progressBar";
+  progressClassName?: string;
+  progressSelectedClass?: string;
+  timerStyle?:
+    | "leftRight"
+    | "leftTop"
+    | "leftBottom"
+    | "rightTop"
+    | "rightBottom";
+}
+
+interface GeneralButtonProps extends BaseSTVPlayerButtonProps {
+  action: Exclude<STVPlayerButtonAction, "progressBar">;
+}
+
+export type STVPlayerButtonProps = ProgressBarProps | GeneralButtonProps;
 
 export interface STVuiProps {
   title?: string | null;
