@@ -67,11 +67,12 @@ function App() {
 
   return <ReactSTVPlayer
     options={options}
-    mediaList={mediaList}
     disableMouseHover
-    mediaTitle={"Related Videos"}
-    mediaCount={mediaList.length}
-    mediaIndex={0}
+    title={"HLS Stream Bip"}
+    // mediaList={mediaList}
+    // mediaTitle={"Related Videos"}
+    // mediaCount={mediaList.length}
+    // mediaIndex={0}
     customButtons={style1}
   />;
 }

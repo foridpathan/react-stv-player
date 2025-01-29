@@ -143,8 +143,8 @@ export const ReactSTVPlayer = (props: STVPlayerProps) => {
             />
             {!options?.controls &&
                 <STVPlayerUI
-                    title={mediaList ? mediaList[mediaIndex]?.title : ""}
-                    subTitle={mediaList ? mediaList[mediaIndex]?.subTitle : ""}
+                    title={mediaList ? mediaList[mediaIndex]?.title : props.title || ""}
+                    subTitle={mediaList ? mediaList[mediaIndex]?.subTitle : props.subTitle || ""}
                     customButtons={customButtons}
                     onLoopPress={onLoopPress}
                     onLikePress={onLikePress}
