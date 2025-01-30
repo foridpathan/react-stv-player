@@ -1,0 +1,12 @@
+@import url("video.js/dist/video-js.css");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.vjs-stv {
+    width: 100vw;
+    height: 100vh;
+}
+.vjs-stv video {
+    object-fit: fill;
+}
