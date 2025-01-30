@@ -40,7 +40,6 @@ export const useSTVPlayerActivity = () => {
         event.code === "Escape" ||
         event.keyCode === 10009 ||
         event.keyCode === 461;
-
       if (back) {
         if (settingToggle) {
           if (currentTrack) {
@@ -49,7 +48,13 @@ export const useSTVPlayerActivity = () => {
             actions.setSettingToggle(false);
             setFocus("STVPlayer");
           }
+        } else if (activity) {
+          console.log(activity);
+          actions.setActivity(false);
         }
+      } else {
+        actions.setActivity(true);
+        startActivityTimer(activity);
       }
     },
     [actions, settingToggle, currentTrack]
@@ -58,8 +63,6 @@ export const useSTVPlayerActivity = () => {
   const activate = useCallback(
     (e: MouseEvent | KeyboardEvent) => {
       actionBack(e as KeyboardEvent);
-      actions.setActivity(true);
-      startActivityTimer(activity);
       if (!activity) e.stopPropagation();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
