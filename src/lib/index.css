@@ -1,3 +1,4 @@
+@import url("video.js/dist/video-js.css");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

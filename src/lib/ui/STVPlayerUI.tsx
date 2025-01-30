@@ -269,25 +269,35 @@ export const STVPlayerUI = memo((props: STVuiProps) => {
             <div className={`w-full h-full flex flex-col justify-between gap-4 ${activity ? "opacity-100" : "opacity-0"}`}>
                 <FocusContext.Provider value={focusKey}>
                     <div ref={ref} className={`flex-1 flex flex-col justify-between gap-4`}>
-                        <div className="flex justify-between gap-4">
-                            <div className="flex gap-3">{renderButtons('top', 'left')}</div>
-                            <div className="flex gap-3">{renderButtons('top', 'right')}</div>
+                        <div>
+                            {
+                                currentButtons.filter((f) => f.position === "top").length > 0 &&
+                                <SectionRender className="flex justify-between gap-4">
+                                    <div className="flex gap-3">{renderButtons('top', 'left')}</div>
+                                    <div className="flex gap-3">{renderButtons('top', 'right')}</div>
+                                </SectionRender>
+                            }
                         </div>
-                        <div className="flex flex-col justify-between gap-4 flex-1">
-                            <div className="">{renderButtons('center', 'top')}</div>
-                            <div className="flex items-center justify-between">
-                                <div className="flex gap-3 ">{renderButtons('center', 'left')}</div>
-                                <div className="flex gap-3">{renderButtons('center', 'center')}</div>
-                                <div className="flex gap-3">{renderButtons('center', 'right')}</div>
-                            </div>
-                            <div className="">{
-                                renderButtons('center', 'bottom')}
-                                {currentButtons.filter(button => button.action === 'title').length <= 0 && <div className="flex flex-col">
-                                    {title && <div className="text-[2.2vw] text-white">{title}</div>}
-                                    {subTitle && <div className="text-2xl text-white">{subTitle}</div>}
-                                </div>
-                                }
-                            </div>
+                        <div>
+                            {
+                                currentButtons.filter((f) => f.position === "center").length > 0 &&
+                                <SectionRender className="flex flex-col justify-between gap-4 flex-1">
+                                    <div className="">{renderButtons('center', 'top')}</div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex gap-3 ">{renderButtons('center', 'left')}</div>
+                                        <div className="flex gap-3">{renderButtons('center', 'center')}</div>
+                                        <div className="flex gap-3">{renderButtons('center', 'right')}</div>
+                                    </div>
+                                    <div className="">{
+                                        renderButtons('center', 'bottom')}
+                                        {currentButtons.filter(button => button.action === 'title').length <= 0 && <div className="flex flex-col">
+                                            {title && <div className="text-[2.2vw] text-white">{title}</div>}
+                                            {subTitle && <div className="text-2xl text-white">{subTitle}</div>}
+                                        </div>
+                                        }
+                                    </div>
+                                </SectionRender>
+                            }
                         </div>
                         <div className="flex flex-col">
                             <div className="">{renderButtons('bottom', 'top')}</div>

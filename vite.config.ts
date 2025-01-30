@@ -10,12 +10,8 @@ export default defineConfig({
     cssInjectedByJsPlugin(),
     react(),
     dtsPlugin({
-      // entryRoot: "src/lib", // Ensure it includes your type folder
-      // include: ["src/lib"],
       insertTypesEntry: true,
-      // entryRoot: "src/lib",
       include: ["src/lib/**/*"],
-      // insertTypesEntry: true,
     }),
   ],
   build: {
