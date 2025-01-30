@@ -59,19 +59,19 @@ const Demo = ({ setPlayer }: { setPlayer: (p: DemoType) => void }) => {
         {
             title: "Player 1",
             description: "A basic playlist with HLS, DASH, and MP4 streams",
-            img: "/images/player1.png",
+            img: "images/player1.png",
             component: <Player1 />
         },
         {
             title: "Player 2",
             description: "A basic playlist with HLS, DASH, and MP4 streams",
-            img: "/images/player2.png",
+            img: "images/player2.png",
             component: <Player2 />
         },
         {
             title: "Playlist 1",
             description: "A basic playlist with HLS, DASH, and MP4 streams",
-            img: "/images/playlist1.png",
+            img: "images/playlist1.png",
             component: <Playlist1 />
         }
     ]
