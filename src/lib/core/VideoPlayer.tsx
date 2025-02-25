@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import "@videojs/http-streaming";
 import React, { forwardRef, Ref, useEffect, useRef } from "react";
 import videojs from "video.js";
 import Player from "video.js/dist/types/player";
-// import "video.js/dist/video-js.css";
+import "videojs-contrib-dash";
+import "videojs-contrib-eme";
 import "../index.css";
 import { VideoJsPlayerOptions } from "../types";
 
@@ -86,13 +88,14 @@ export const VideoPlayer = forwardRef<Player, VideoPlayerProps>(
 
                 // Update player options dynamically
                 player.autoplay(options.autoplay ?? false);
+                console.log(options)
                 if (options.src) {
-                    player.src([{ src: options.src, type: "video/mp4" }]);
+                    player.src([{ src: options.src }]);
                 } else if (options.sources) {
                     player.src(options.sources);
                 }
             }
-            
+
             return () => {
                 // Dispose player on unmount
                 if (playerRef.current) {
@@ -108,7 +111,7 @@ export const VideoPlayer = forwardRef<Player, VideoPlayerProps>(
                 playerRef.current.loop(options.loop ?? false);
             }
         }, [options.loop])
-        
+
         useEffect(() => {
             if (playerRef.current) {
                 playerRef.current.muted(options.muted ?? false);
@@ -122,8 +125,8 @@ export const VideoPlayer = forwardRef<Player, VideoPlayerProps>(
                 if (onPause) player.on("pause", onPause);
                 if (onEnded) player.on("ended", onEnded);
                 player.on("error", () => onError?.(player.error()));
-                player.on("durationchange", () => onDuration?.(player?.duration()||0));
-                player.on("timeupdate", () => onProgress?.(player.currentTime()||0));
+                player.on("durationchange", () => onDuration?.(player?.duration() || 0));
+                player.on("timeupdate", () => onProgress?.(player.currentTime() || 0));
 
             }
         }, [onPlay, onPause, onEnded, onError, onDuration, onProgress, playerRef]);

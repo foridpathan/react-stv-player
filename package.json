@@ -1,7 +1,7 @@
 {
   "name": "react-stv-player",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,13 +17,17 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/react-stv-player.es.js",
+  "main": "./dist/react-stv-player.cjs",
   "module": "./dist/react-stv-player.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@noriginmedia/norigin-spatial-navigation": "^2.2.2",
+    "@videojs/http-streaming": "^3.15.0",
+    "mux.js": "^6.3.0",
     "react-syntax-highlighter": "^15.6.1",
     "video.js": "^8.21.0",
+    "videojs-contrib-dash": "^5.1.1",
+    "videojs-contrib-eme": "^5.5.1",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
@@ -94,6 +98,7 @@
     "type": "git",
     "url": "git+https://github.com/foridpathan/react-stv-player.git"
   },
+  "homepage": "https://foridpathan.github.io/react-stv-player",
   "author": "Forid Pathan <foridpathan45@gmail.com>",
   "license": "MIT",
   "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387"

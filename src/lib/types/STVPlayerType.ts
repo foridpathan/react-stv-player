@@ -38,6 +38,8 @@ export interface VideoJsSource {
   src: string;
   type?: string;
   withCredentials?: boolean;
+  emeHeaders?: any;
+  keySystems?: any;
 }
 
 export interface VideoJsTrack {
